@@ -16,36 +16,28 @@
   --bg:#080808;--card:#111;--border:#222;
   --accent:#FF3B3B;--accent2:#FF6B6B;
   --text:#EFEFEF;--muted:#666;
-  --male:#3B8BFF;--female:#FF3B8B;--green:#3BFF8B;
+  --male:#3B8BFF;--female:#FF3B8B;
 }
-html,body{height:100%;background:var(--bg);overflow:hidden;width:100%}
+html,body{height:100%;background:var(--bg);overflow:hidden;width:100%;position:relative}
 body{font-family:'Syne',sans-serif;color:var(--text);
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeSpeed;
-  -webkit-touch-callout:none;
 }
-#chat{
-  -webkit-user-select:none;
-  user-select:none;
-}
-#chat .bubble{
-  -webkit-user-select:text;
-  user-select:text;
-}
-.app{max-width:480px;margin:0 auto;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
-.noise{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");opacity:0.5}
-.screen{position:absolute;inset:0;display:flex;flex-direction:column;z-index:1;transition:opacity 0.3s,transform 0.3s;overflow-y:auto}
-.screen.hidden{opacity:0;pointer-events:none;transform:translateY(10px)}
+.app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#080808}
+.noise{position:absolute;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");opacity:0.5}
 
-/* SPLASH */
-#splash{padding:1.5rem;gap:1.2rem;align-items:center}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;z-index:1;opacity:1;pointer-events:auto;transform:none;transition:opacity 0.15s ease}
+.screen.hidden{opacity:0;pointer-events:none;z-index:0}
+
+/* SPLASH/HOME SCREEN SCROLL FIXED */
+#splash{padding:1.5rem;gap:1.2rem;align-items:center;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .logo{font-size:52px;font-weight:800;letter-spacing:-3px;line-height:1;
   background:linear-gradient(135deg,#fff 0%,#555 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-sub{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:4px;color:var(--muted);margin-top:4px;text-align:center}
 
 /* HOW TO USE */
-.how-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem}
+.how-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem;flex-shrink:0}
 .how-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--accent);margin-bottom:10px}
 .how-steps{display:flex;flex-direction:column;gap:8px}
 .how-step{display:flex;gap:10px;align-items:flex-start}
@@ -57,38 +49,37 @@ body{font-family:'Syne',sans-serif;color:var(--text);
 
 /* DISCLAIMER */
 .disclaimer{width:100%;background:rgba(255,59,59,0.05);border:1px solid rgba(255,59,59,0.2);
-  border-radius:10px;padding:10px 14px;
+  border-radius:10px;padding:10px 14px;flex-shrink:0;
   font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);line-height:1.7;text-align:center}
 .disclaimer b{color:var(--accent)}
 
-.section-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-align:center;text-transform:uppercase;width:100%}
+.section-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-align:center;text-transform:uppercase;width:100%;flex-shrink:0}
 
-/* GENDER CARDS */
-.gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+/* GENDER GRID SELECTION FIXES */
+.gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;flex-shrink:0;position:relative;z-index:5}
 .gbtn{border:1px solid var(--border);background:var(--card);border-radius:12px;
   padding:1.1rem 0.8rem;cursor:pointer;display:flex;flex-direction:column;
-  align-items:center;gap:6px;transition:all 0.2s;position:relative;overflow:hidden}
-.gbtn::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s}
+  align-items:center;gap:6px;transition:all 0.2s;position:relative;overflow:hidden;-webkit-user-select:none;user-select:none}
+.gbtn::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;pointer-events:none}
 .gbtn.male::before{background:radial-gradient(circle at 50% 0%,rgba(59,139,255,0.18),transparent 70%)}
 .gbtn.female::before{background:radial-gradient(circle at 50% 0%,rgba(255,59,139,0.18),transparent 70%)}
 .gbtn:hover::before,.gbtn.sel::before{opacity:1}
 .gbtn.male:hover,.gbtn.male.sel{border-color:var(--male)}
 .gbtn.female:hover,.gbtn.female.sel{border-color:var(--female)}
-.gbtn-icon{font-size:26px}
-.gbtn-name{font-size:12px;font-weight:700;letter-spacing:1px}
+.gbtn-icon{font-size:26px;pointer-events:none}
+.gbtn-name{font-size:12px;font-weight:700;letter-spacing:1px;pointer-events:none}
 .gbtn.male .gbtn-name{color:var(--male)}
 .gbtn.female .gbtn-name{color:var(--female)}
-.gbtn-count{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace}
+.gbtn-count{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;pointer-events:none}
 
 .connect-btn{width:100%;padding:1rem;border-radius:12px;background:var(--accent);border:none;
-  color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
-  letter-spacing:1px;cursor:pointer;transition:all 0.2s;opacity:0.25;pointer-events:none}
+  color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;flex-shrink:0;
+  letter-spacing:1px;cursor:pointer;transition:all 0.2s;opacity:0.25;pointer-events:none;z-index:5}
 .connect-btn.on{opacity:1;pointer-events:all}
-.connect-btn.on:hover{background:var(--accent2);transform:scale(1.02)}
-.connect-btn.on:active{transform:scale(0.97)}
+.connect-btn.on:hover{background:var(--accent2)}
 
 .reset-bar{display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:10px;border-top:1px solid var(--border);margin-top:auto;
+  padding:10px;border-top:1px solid var(--border);margin-top:auto;width:100%;flex-shrink:0;
   font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
@@ -109,11 +100,11 @@ body{font-family:'Syne',sans-serif;color:var(--text);
   font-size:11px;cursor:pointer;letter-spacing:2px;transition:all 0.2s}
 .cancel-btn:hover{border-color:#fff;color:#fff}
 
-/* CHAT CSS */
-#chat{overflow:hidden;display:flex;flex-direction:column;position:relative;height:100vh}
+/* CHAT MAIN LAYER STRUCTURE */
+#chat{overflow:hidden;display:flex;flex-direction:column;position:relative;height:100%;width:100%}
 .chat-header{padding:13px 16px;border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:12px;flex-shrink:0;
-  background:rgba(8,8,8,0.95);backdrop-filter:blur(10px);z-index:10}
+  background:rgba(8,8,8,0.95);backdrop-filter:blur(10px);z-index:100}
 .pav{width:38px;height:38px;border-radius:50%;display:flex;
   align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .pinfo{flex:1;min-width:0}
@@ -124,13 +115,15 @@ body{font-family:'Syne',sans-serif;color:var(--text);
   background:transparent;color:var(--muted);font-family:'Space Mono',monospace;
   font-size:9px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;flex-shrink:0}
 .next-btn:hover{border-color:var(--accent);color:var(--accent)}
-.messages{flex:1;overflow-y:auto;padding:16px;padding-bottom:120px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
-.messages::-webkit-scrollbar{width:2px}
-.messages::-webkit-scrollbar-thumb{background:var(--border)}
-.msg{display:flex;flex-direction:column;max-width:85%;word-wrap:break-word}
+
+/* MESSAGES VIEW ZONE - FULL VERTICAL SCROLL CAPABLE */
+.messages{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px;padding-bottom:240px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch;position:relative;z-index:1}
+.messages::-webkit-scrollbar{width:3px}
+.messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.msg{display:flex;flex-direction:column;max-width:85%;word-wrap:break-word;position:relative;z-index:2}
 .msg.me{align-self:flex-end;align-items:flex-end}
 .msg.them{align-self:flex-start;align-items:flex-start}
-.bubble{padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;word-break:break-word}
+.bubble{padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;word-break:break-word;-webkit-user-select:text;user-select:text}
 .msg.me .bubble{background:var(--accent);color:#fff;border-bottom-right-radius:4px}
 .msg.them .bubble{background:var(--card);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
 .mtime{font-size:9px;color:var(--muted);margin-top:3px;font-family:'Space Mono',monospace}
@@ -138,76 +131,74 @@ body{font-family:'Syne',sans-serif;color:var(--text);
   color:var(--muted);background:var(--card);border:1px solid var(--border);
   padding:5px 14px;border-radius:20px;text-align:center}
 
-/* CENTER TEXTBOX INPUT STYLE */
+/* FLUID DRAGGABLE DOCKABLE INTERFACE WINDOW */
 .input-area{
   position:absolute;
-  top:50%;
+  bottom:30px;
   left:50%;
-  transform:translate(-50%, -50%);
-  width:90%;
-  max-width:400px;
-  background:rgba(17,17,17,0.85);
-  backdrop-filter:blur(20px) saturate(180%);
-  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  transform:translateX(-50%);
+  width:92%;
+  max-width:420px;
+  background:rgba(17,17,17,0.92);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
   border:1px solid rgba(255,255,255,0.08);
-  padding:12px;
+  padding:6px 12px 12px 12px;
   border-radius:24px;
   display:flex;
   flex-direction:column;
-  gap:8px;
-  z-index:100;
-  box-shadow:0 20px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+  gap:6px;
+  z-index:500;
+  box-shadow:0 20px 40px rgba(0,0,0,0.8);
+}
+.drag-handle{
+  width:40px;
+  height:5px;
+  background:rgba(255,255,255,0.2);
+  border-radius:3px;
+  align-self:center;
+  margin-bottom:4px;
+  flex-shrink:0;
+  cursor:ns-resize;
+  touch-action:none;
 }
 .input-row{display:flex;gap:8px;align-items:center;width:100%}
 .msg-input{
-  flex:1;background:rgba(8,8,8,0.6);border:1px solid var(--border);
-  border-radius:18px;padding:12px 16px;color:var(--text);
-  font-family:'Syne',sans-serif;font-size:15px;outline:none;
-  transition:border-color 0.2s;resize:none;
-  max-height:80px;overflow-y:auto;line-height:1.4;
-  -webkit-appearance:none;appearance:none;
-  -webkit-user-select:text;user-select:text;
+  flex:1;background:rgba(8,8,8,0.8);border:1px solid var(--border);
+  border-radius:16px;padding:11px 14px;color:var(--text);
+  font-family:'Syne',sans-serif;font-size:14px;outline:none;
+  transition:border-color 0.15s;resize:none;
+  max-height:75px;overflow-y:auto;line-height:1.4;
+  -webkit-appearance:none;appearance:none;-webkit-user-select:text;user-select:text;
 }
 .msg-input:focus{border-color:var(--accent)}
 .msg-input::placeholder{color:var(--muted)}
 .send-btn{
-  width:42px;height:42px;border-radius:50%;background:var(--accent);border:none;
+  width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:all 0.2s;flex-shrink:0;-webkit-tap-highlight-color:transparent;
+  transition:all 0.15s;flex-shrink:0;
 }
 .send-btn:hover{background:var(--accent2)}
 .send-btn:active{transform:scale(0.93)}
 
-/* SCREENSHOT DEFENSE BLANKING STATE */
+/* SCREENSHOT BLANKING PROTECTION ENGINE */
 .screenshot-blocker{
-  filter:blur(100px) !important;
+  filter:blur(80px) !important;
   opacity:0 !important;
   background:#000000 !important;
   pointer-events:none !important;
 }
 
 .toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:#1a1a1a;border:1px solid var(--border);color:var(--text);
-  font-family:'Space Mono',monospace;font-size:11px;padding:10px 20px;
-  border-radius:20px;opacity:0;transition:all 0.3s;z-index:9999;white-space:nowrap}
+  background:#161616;border:1px solid var(--border);color:var(--text);
+  font-family:'Space Mono',monospace;font-size:11px;padding:10px 18px;
+  border-radius:20px;opacity:0;transition:all 0.25s;z-index:9999;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Mobile optimizations */
-@media (max-height: 600px) {
-  .logo{font-size:40px}
-  .logo-sub{font-size:8px}
-  .how-box{padding:0.8rem}
-  .how-step{gap:8px}
-  .step-text{font-size:11px}
-  .input-area{width:94%}
-}
-
-@media (max-width: 480px) {
-  .app{max-width:100%}
-  .screen{overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .messages{padding:12px;padding-bottom:140px}
-  .bubble{padding:8px 12px;font-size:12px}
-  .msg{max-width:90%}
+@media (max-height: 620px) {
+  .logo{font-size:36px}
+  .how-box{padding:0.7rem}
+  .input-area{width:94%;bottom:15px}
 }
 </style>
 </head>
@@ -215,49 +206,40 @@ body{font-family:'Syne',sans-serif;color:var(--text);
 <div class="noise"></div>
 <div class="app" id="main-view-container">
 
-  <!-- SPLASH -->
   <div class="screen" id="splash">
-    <div style="text-align:center;padding-top:0.5rem">
+    <div style="text-align:center;width:100%;flex-shrink:0">
       <div class="logo">Strangrr</div>
       <div class="logo-sub">talk to a stranger. feel alive.</div>
     </div>
 
-    <!-- HOW TO USE -->
     <div class="how-box">
       <div class="how-title">HOW IT WORKS</div>
       <div class="how-steps">
-        <div class="how-step"><div class="step-num">1</div><div class="step-text"><b>Pick your gender</b> — male or female</div></div>
-        <div class="how-step"><div class="step-num">2</div><div class="step-text"><b>Choose who you want to chat with</b> — male or female stranger</div></div>
-        <div class="how-step"><div class="step-num">3</div><div class="step-text"><b>Hit connect</b> — we match you instantly with a random stranger</div></div>
-        <div class="how-step"><div class="step-num">4</div><div class="step-text"><b>Chat freely</b> — fresh anonymous name generated on every single connect</div></div>
-        <div class="how-step"><div class="step-num">5</div><div class="step-text"><b>Fresh Matching</b> — 15 mins structural timeout automatically cycles to a new session</div></div>
+        <div class="how-step"><div class="step-num">1</div><div class="step-text"><b>Pick your gender</b> — Tells system who you are</div></div>
+        <div class="how-step"><div class="step-num">2</div><div class="step-text"><b>Choose match target</b> — Filter preference instantly</div></div>
+        <div class="how-step"><div class="step-num">3</div><div class="step-text"><b>Fluid Control</b> — Drag input card up/down across layout</div></div>
+        <div class="how-step"><div class="step-num">4</div><div class="step-text"><b>Hard-Exit drops</b> — Leaving/exiting immediately cleans nodes</div></div>
       </div>
     </div>
 
-    <!-- DISCLAIMER -->
     <div class="disclaimer">
-      ⚠️ <b>just for fun.</b> this is a random anonymous chat.<br>
-      we are <b>not responsible</b> for conversations.<br>
-      don't share personal info. don't take it seriously.<br>
-      <b>be kind. have fun. stay safe.</b>
+      ⚠️ <b>Real-time synchronization engine live.</b> Unloading window or clearing browser state terminates sessions instantly to protect identity routing paths.
     </div>
 
-    <!-- I AM -->
     <div class="section-label">i am —</div>
     <div class="gender-grid">
       <button class="gbtn male" onclick="pickMyGender('male',this)">
         <div class="gbtn-icon">♂</div>
         <div class="gbtn-name">MALE</div>
-        <div class="gbtn-count" id="m-count">— online</div>
+        <div class="gbtn-count" id="m-count">0 online</div>
       </button>
       <button class="gbtn female" onclick="pickMyGender('female',this)">
         <div class="gbtn-icon">♀</div>
         <div class="gbtn-name">FEMALE</div>
-        <div class="gbtn-count" id="f-count">— online</div>
+        <div class="gbtn-count" id="f-count">0 online</div>
       </button>
     </div>
 
-    <!-- CHAT WITH -->
     <div class="section-label" id="want-label" style="opacity:0.3">i want to chat with —</div>
     <div class="gender-grid" style="opacity:0.3;pointer-events:none" id="want-grid">
       <button class="gbtn male" onclick="pickWantGender('male',this)">
@@ -274,39 +256,38 @@ body{font-family:'Syne',sans-serif;color:var(--text);
 
     <div class="reset-bar">
       <div class="dot"></div>
-      <span>Secured Anonymous Routing Active</span>
+      <span>Accelerated Pipeline Active</span>
     </div>
   </div>
 
-  <!-- SEARCHING -->
   <div class="screen hidden" id="searching">
     <div class="radar">
       <div class="rring"></div><div class="rring"></div><div class="rring"></div>
       <div class="rcore"></div>
     </div>
     <div class="search-info">
-      <strong>searching...</strong>
+      <strong>establishing ultra-fast connection...</strong>
       finding a <span id="want-gender-label" style="color:var(--accent)">stranger</span><br>
-      stay anonymous · stay safe
+      no trace tracking active
     </div>
     <button class="cancel-btn" onclick="cancelSearch()">CANCEL</button>
   </div>
 
-  <!-- CHAT -->
   <div class="screen hidden" id="chat">
     <div class="chat-header">
       <div class="pav" id="p-avatar">♀</div>
       <div class="pinfo">
         <div class="pname" id="p-name">stranger</div>
-        <div class="pstatus">● anonymous · no trace</div>
+        <div class="pstatus">● active session · zero lag</div>
       </div>
       <div class="ctimer"><div class="dot"></div><span id="chat-timer">15:00</span></div>
       <button class="next-btn" onclick="nextStranger()">NEXT ↻</button>
     </div>
+    
     <div class="messages" id="messages"></div>
     
-    <!-- MIDDLE OF SCREEN TEXTBOX CONTAINER -->
     <div class="input-area" id="input-area">
+      <div class="drag-handle" id="drag-handle"></div>
       <div class="input-row">
         <textarea class="msg-input" id="msg-input" placeholder="say something..." maxlength="500" rows="1"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
@@ -341,70 +322,91 @@ const db = getDatabase(app);
 const ADJECTIVES = ['Red','Blue','Green','Purple','Golden','Silver','Cosmic','Wild','Lazy','Brave','Calm','Dark','Bright','Swift','Quiet'];
 const ANIMALS = ['Panda','Fox','Tiger','Wolf','Eagle','Shark','Penguin','Koala','Lynx','Otter','Falcon','Raven','Viper','Bison','Moose'];
 function funName() {
-  const a = ADJECTIVES[Math.floor(Math.random()*ADJECTIVES.length)];
-  const b = ANIMALS[Math.floor(Math.random()*ANIMALS.length)];
-  return a + ' ' + b;
+  return ADJECTIVES[Math.floor(Math.random()*ADJECTIVES.length)] + ' ' + ANIMALS[Math.floor(Math.random()*ANIMALS.length)];
 }
 
-let myGender = null;
-let wantGender = null;
+let myGender = null, wantGender = null;
 let myId = 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 let myName = funName();
-let chatId = null;
-let partnerName = null;
-let partnerGender = null;
-let searching = false;
-let msgListener = null;
-let partnerListener = null;
-let searchListener = null;
-let presRef = null;
+let chatId = null, partnerName = null, partnerGender = null;
+let searching = false, msgListener = null, partnerListener = null, searchListener = null, presRef = null;
+let chatTimerInterval = null, chatTimeLeft = 15 * 60;
 
-let chatTimerInterval = null;
-let chatTimeLeft = 15 * 60; 
+/* CLEAN ISOLATED SYSTEM DRAG MANAGEMENT MECHANISM FOR HANDLE ONLY */
+const dragContainer = document.getElementById("input-area");
+const dragHandle = document.getElementById("drag-handle");
+let activeDrag = false, initialY, currentY = 0, yOffset = 0;
 
-let heartbeatInterval = null;
+dragHandle.addEventListener("touchstart", dragStart, {passive: true});
+dragHandle.addEventListener("touchend", dragEnd, {passive: true});
+dragHandle.addEventListener("touchmove", drag, {passive: false});
+
+dragHandle.addEventListener("mousedown", dragStart);
+document.addEventListener("mousemove", drag);
+document.addEventListener("mouseup", dragEnd);
+
+function dragStart(e) {
+  let clientY = (e.type === "touchstart") ? e.touches[0].clientY : e.clientY;
+  initialY = clientY - yOffset;
+  activeDrag = true;
+}
+function dragEnd() {
+  initialY = currentY;
+  activeDrag = false;
+}
+function drag(e) {
+  if (!activeDrag) return;
+  let clientY = (e.type === "touchmove") ? e.touches[0].clientY : e.clientY;
+  
+  // Custom execution tracking variables
+  if(e.cancelable) e.preventDefault();
+  currentY = clientY - initialY;
+  
+  // Bounds tracking limits setup
+  const maxShift = window.innerHeight * 0.05;
+  const minShift = -window.innerHeight * 0.68;
+  if (currentY > maxShift) currentY = maxShift;
+  if (currentY < minShift) currentY = minShift;
+  
+  yOffset = currentY;
+  dragContainer.style.transform = `translate(-50%, ${currentY}px)`;
+}
+
+// PIPELINE PERFORMANCE PRESENCE ARCHITECTURE
 function startPresence() {
   if(!myGender) return;
   presRef = ref(db, `presence/${myGender}/${myId}`);
   set(presRef, { name: myName, ts: Date.now() });
   onDisconnect(presRef).remove();
-  clearInterval(heartbeatInterval);
-  heartbeatInterval = setInterval(() => {
-    if(presRef) set(presRef, { name: myName, ts: Date.now() });
-  }, 15000);
+  
+  runTransaction(ref(db, `counters/${myGender}`), c => (c || 0) + 1);
+  onDisconnect(ref(db, `counters/${myGender}`)).runTransaction(c => c ? c - 1 : 0);
 }
 
 function stopPresence() {
-  clearInterval(heartbeatInterval);
-  if(presRef) remove(presRef);
-  presRef = null;
-}
-
-function cleanStale(snap) {
-  if(!snap.exists()) return;
-  const now = Date.now();
-  Object.entries(snap.val()).forEach(([uid, data]) => {
-    if(data && data.ts && (now - data.ts) > 45000) {
-      remove(ref(db, `presence/${snap.ref.key}/${uid}`));
-    }
-  });
+  if(presRef) {
+    remove(presRef);
+    runTransaction(ref(db, `counters/${myGender}`), c => c ? c - 1 : 0);
+    presRef = null;
+  }
 }
 
 function watchOnline() {
-  onValue(ref(db,'presence/male'), snap => {
-    cleanStale(snap);
-    document.getElementById('m-count').textContent = (snap.exists() ? Object.keys(snap.val()).length : 0) + ' online';
+  onValue(ref(db, 'counters/male'), snap => {
+    document.getElementById('m-count').textContent = (snap.val() || 0) + ' online';
   });
-  onValue(ref(db,'presence/female'), snap => {
-    cleanStale(snap);
-    document.getElementById('f-count').textContent = (snap.exists() ? Object.keys(snap.val()).length : 0) + ' online';
+  onValue(ref(db, 'counters/female'), snap => {
+    document.getElementById('f-count').textContent = (snap.val() || 0) + ' online';
   });
 }
 
 window.pickMyGender = function(g, el) {
   myGender = g;
-  document.querySelectorAll('.gbtn').forEach(b => b.classList.remove('sel'));
+  // Dynamic identification targeting filter loops
+  const buttons = document.querySelectorAll('#splash .gender-grid:not(#want-grid) .gbtn');
+  buttons.forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
+  
   document.getElementById('want-grid').style.opacity = '1';
   document.getElementById('want-grid').style.pointerEvents = 'all';
   document.getElementById('want-label').style.opacity = '1';
@@ -425,7 +427,7 @@ function updateConnectBtn() {
   const btn = document.getElementById('connect-btn');
   if(myGender && wantGender) {
     btn.classList.add('on');
-    btn.textContent = `FIND A ${wantGender.toUpperCase()} STRANGER →`;
+    btn.textContent = `MATCH INSTANTLY →`;
   } else {
     btn.classList.remove('on');
     btn.textContent = 'SELECT PREFERENCES ABOVE';
@@ -468,8 +470,7 @@ window.startSearch = async function() {
     onDisconnect(myQRef).remove();
 
     searchListener = onValue(ref(db, `chats`), async snap => {
-      if(!searching) return;
-      if(!snap.exists()) return;
+      if(!searching || !snap.exists()) return;
       const chats = snap.val();
       for(const [cid, cdata] of Object.entries(chats)) {
         if(cdata.users && cdata.users[myId] && cdata.active) {
@@ -504,46 +505,24 @@ function enterChat() {
   av.style.background = pg === 'female' ? '#1a0a12' : '#0a0f1a';
   document.getElementById('p-name').textContent = partnerName || funName();
   document.getElementById('messages').innerHTML = '';
-  addSysMsg('connected · say hi 👋');
+  addSysMsg('connected · ultra latency operational');
   
   sessionStorage.setItem('strangrr_active_chat', chatId);
-  
   goTo('chat');
   listenMessages();
   watchPartner();
   startChatTimer();
-
-  const userStatRef = ref(db, `userstats/${myId}`);
-  runTransaction(userStatRef, data => {
-    if(data === null) return { name: myName, gender: myGender, chatCount: 1, lastSeen: Date.now() };
-    data.chatCount = (data.chatCount || 0) + 1;
-    data.lastSeen = Date.now();
-    return data;
-  });
 }
 
 function startChatTimer() {
   clearInterval(chatTimerInterval);
-  chatTimeLeft = 15 * 60; 
-  updateTimerDisplay();
-
+  chatTimeLeft = 15 * 60;
   chatTimerInterval = setInterval(() => {
     chatTimeLeft--;
-    updateTimerDisplay();
-
-    if(chatTimeLeft <= 0) {
-      clearInterval(chatTimerInterval);
-      showToast('⌛ 15 minutes expired!');
-      nextStranger();
-    }
+    const m = Math.floor(chatTimeLeft / 60), s = chatTimeLeft % 60;
+    document.getElementById('chat-timer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(chatTimeLeft <= 0) { clearInterval(chatTimerInterval); nextStranger(); }
   }, 1000);
-}
-
-function updateTimerDisplay() {
-  const m = Math.floor(chatTimeLeft / 60);
-  const s = chatTimeLeft % 60;
-  const el = document.getElementById('chat-timer');
-  if(el) el.textContent = `${pad(m)}:${pad(s)}`;
 }
 
 function listenMessages() {
@@ -552,19 +531,15 @@ function listenMessages() {
   msgListener = onValue(msgsRef, snap => {
     if(!snap.exists()) return;
     const container = document.getElementById('messages');
-    const oldHeight = container.scrollHeight;
-    const wasAtBottom = container.scrollTop >= oldHeight - container.clientHeight - 50;
-    
     container.innerHTML = '';
     Object.values(snap.val()).sort((a,b)=>a.ts-b.ts).forEach(m => {
-      addMsgEl(m.text, m.sender === myId ? 'me' : 'them', m.ts);
+      const d = document.createElement('div');
+      d.className = 'msg ' + (m.sender === myId ? 'me' : 'them');
+      const timeStr = m.ts ? new Date(m.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : 'now';
+      d.innerHTML = `<div class="bubble">${esc(m.text)}</div><div class="mtime">${timeStr}</div>`;
+      container.appendChild(d);
     });
-    
-    if(wasAtBottom) {
-      requestAnimationFrame(() => {
-        container.scrollTop = container.scrollHeight;
-      });
-    }
+    container.scrollTop = container.scrollHeight;
   });
 }
 
@@ -572,9 +547,9 @@ function watchPartner() {
   if(!chatId) return;
   partnerListener = onValue(ref(db, `chats/${chatId}/active`), snap => {
     if(snap.exists() && snap.val() === false) {
-      addSysMsg('stranger disconnected · cycling to next match');
-      showToast('Stranger left the chat');
-      setTimeout(() => { nextStranger(); }, 1500);
+      if(msgListener){ off(ref(db,`chats/${chatId}/messages`),'value',msgListener); msgListener=null; }
+      showToast('Stranger disconnected');
+      exitToHomeImmediately();
     }
   });
 }
@@ -582,107 +557,61 @@ function watchPartner() {
 window.sendMessage = async function() {
   const inp = document.getElementById('msg-input');
   const txt = inp.value.trim();
-
-  if(!txt) return;
-  if(!chatId) return;
-
+  if(!txt || !chatId) return;
   inp.value = '';
   autoResize(inp);
-
-  await push(ref(db, `chats/${chatId}/messages`), {
-    sender: myId,
-    text: txt,
-    ts: Date.now()
-  });
+  await push(ref(db, `chats/${chatId}/messages`), { sender: myId, text: txt, ts: Date.now() });
 };
 
 window.nextStranger = async function() {
   clearInterval(chatTimerInterval);
-  await leaveChat();
-  
-  // REGULATE NEW ANONYMOUS ALIAS PROTOCOLS ON CYCLE
-  myName = funName();
-  if (myGender) {
-    startPresence(); 
-  }
-
-  goTo('searching');
-  setTimeout(() => startSearch(), 300);
-};
-
-async function leaveChat() {
-  sessionStorage.removeItem('strangrr_active_chat');
   if(chatId) {
     await set(ref(db, `chats/${chatId}/active`), false);
     if(msgListener){ off(ref(db,`chats/${chatId}/messages`),'value',msgListener); msgListener=null; }
     if(partnerListener){ off(ref(db,`chats/${chatId}/active`),'value',partnerListener); partnerListener=null; }
   }
-  chatId=null; partnerName=null; partnerGender=null;
+  sessionStorage.removeItem('strangrr_active_chat');
+  chatId = null; partnerName = null; partnerGender = null;
+  
+  myName = funName();
+  if (myGender) startPresence();
+  goTo('searching');
+  setTimeout(() => startSearch(), 100);
+};
+
+async function exitToHomeImmediately() {
+  clearInterval(chatTimerInterval);
+  sessionStorage.removeItem('strangrr_active_chat');
+  chatId = null; partnerName = null; partnerGender = null;
+  goTo('splash');
 }
 
-function addMsgEl(text, side, ts) {
-  const c = document.getElementById('messages');
-  const d = document.createElement('div');
-  d.className = 'msg ' + side;
-  const t = ts ? new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : 'now';
-  d.innerHTML = `<div class="bubble">${esc(text)}</div><div class="mtime">${t}</div>`;
-  c.appendChild(d);
-  c.scrollTop = c.scrollHeight;
+/* DESTRUCTIVE ACTION DISCONNECT HANDLERS */
+async function structuralKill() {
+  stopPresence();
+  if(wantGender && myGender) remove(ref(db,`queue/${wantGender}/${myGender}/${myId}`));
+  if(chatId) await set(ref(db, `chats/${chatId}/active`), false);
 }
+
+window.addEventListener('beforeunload', () => { structuralKill(); });
+window.addEventListener('unload', () => { structuralKill(); });
+window.addEventListener('pagehide', () => { structuralKill(); });
 
 window.autoResize = function(el) {
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 80) + 'px';
+  el.style.height = Math.min(el.scrollHeight, 75) + 'px';
 };
-
-/* ADVANCED SCREENSHOT BLANKING ENGINE */
-const targetContainer = document.getElementById('main-view-container');
-
-function triggerScreenBlank() {
-  targetContainer.classList.add('screenshot-blocker');
-}
-
-function removeScreenBlank() {
-  targetContainer.classList.remove('screenshot-blocker');
-}
-
-document.addEventListener('visibilitychange', () => {
-  if(document.visibilityState === 'hidden') {
-    triggerScreenBlank();
-  } else {
-    removeScreenBlank();
-  }
-});
-
-window.addEventListener('blur', () => {
-  triggerScreenBlank();
-});
-window.addEventListener('focus', () => {
-  removeScreenBlank();
-});
-
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keyup', (e) => {
-  if (e.key === 'PrintScreen' || e.keyCode === 44) {
-    triggerScreenBlank();
-    navigator.clipboard.writeText(''); 
-    showToast('Protected UI View Active');
-  }
-});
 
 function addSysMsg(text) {
   const c = document.getElementById('messages');
   const d = document.createElement('div');
-  d.className = 'sys-msg';
-  d.textContent = text;
-  c.appendChild(d);
-  c.scrollTop = c.scrollHeight;
+  d.className = 'sys-msg'; d.textContent = text;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
 }
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 function goTo(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
-function pad(n){ return String(n).padStart(2,'0'); }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 
 window.addEventListener('load', async () => {
   const interruptedChat = sessionStorage.getItem('strangrr_active_chat');
@@ -691,12 +620,6 @@ window.addEventListener('load', async () => {
     await set(ref(db, `chats/${interruptedChat}/active`), false);
   }
   goTo('splash');
-});
-
-window.addEventListener('beforeunload', () => {
-  stopPresence();
-  if(wantGender && myGender) remove(ref(db,`queue/${wantGender}/${myGender}/${myId}`));
-  if(chatId) set(ref(db, `chats/${chatId}/active`), false);
 });
 
 watchOnline();
