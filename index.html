@@ -18,7 +18,7 @@
   --text:#EFEFEF;--muted:#666;
   --male:#3B8BFF;--female:#FF3B8B;--green:#3BFF8B;
 }
-html,body{height:100%;background:var(--bg);overflow:hidden}
+html,body{height:100%;background:var(--bg);overflow:hidden;width:100%}
 body{font-family:'Syne',sans-serif;color:var(--text);
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeSpeed;
@@ -109,11 +109,11 @@ body{font-family:'Syne',sans-serif;color:var(--text);
   font-size:11px;cursor:pointer;letter-spacing:2px;transition:all 0.2s}
 .cancel-btn:hover{border-color:#fff;color:#fff}
 
-/* CHAT */
-#chat{overflow:hidden;display:flex;flex-direction:column}
+/* CHAT CSS */
+#chat{overflow:hidden;display:flex;flex-direction:column;position:relative;height:100vh}
 .chat-header{padding:13px 16px;border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:12px;flex-shrink:0;
-  background:rgba(8,8,8,0.95);backdrop-filter:blur(10px)}
+  background:rgba(8,8,8,0.95);backdrop-filter:blur(10px);z-index:10}
 .pav{width:38px;height:38px;border-radius:50%;display:flex;
   align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .pinfo{flex:1;min-width:0}
@@ -124,7 +124,7 @@ body{font-family:'Syne',sans-serif;color:var(--text);
   background:transparent;color:var(--muted);font-family:'Space Mono',monospace;
   font-size:9px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;flex-shrink:0}
 .next-btn:hover{border-color:var(--accent);color:var(--accent)}
-.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+.messages{flex:1;overflow-y:auto;padding:16px;padding-bottom:120px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
 .messages::-webkit-scrollbar{width:2px}
 .messages::-webkit-scrollbar-thumb{background:var(--border)}
 .msg{display:flex;flex-direction:column;max-width:85%;word-wrap:break-word}
@@ -137,41 +137,59 @@ body{font-family:'Syne',sans-serif;color:var(--text);
 .sys-msg{align-self:center;font-family:'Space Mono',monospace;font-size:10px;
   color:var(--muted);background:var(--card);border:1px solid var(--border);
   padding:5px 14px;border-radius:20px;text-align:center}
+
+/* CENTER TEXTBOX INPUT STYLE */
 .input-area{
-  padding:10px 12px;
-  padding-bottom:max(10px,env(safe-area-inset-bottom,10px));
-  border-top:1px solid var(--border);
-  display:flex;flex-direction:column;gap:8px;
-  flex-shrink:0;background:rgba(8,8,8,0.98);
-  position:sticky;bottom:0;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:90%;
+  max-width:400px;
+  background:rgba(17,17,17,0.85);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.08);
+  padding:12px;
+  border-radius:24px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  z-index:100;
+  box-shadow:0 20px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
 }
-.input-row{display:flex;gap:8px;align-items:flex-end}
+.input-row{display:flex;gap:8px;align-items:center;width:100%}
 .msg-input{
-  flex:1;background:var(--card);border:1px solid var(--border);
-  border-radius:20px;padding:12px 16px;color:var(--text);
-  font-family:'Syne',sans-serif;font-size:16px;outline:none;
+  flex:1;background:rgba(8,8,8,0.6);border:1px solid var(--border);
+  border-radius:18px;padding:12px 16px;color:var(--text);
+  font-family:'Syne',sans-serif;font-size:15px;outline:none;
   transition:border-color 0.2s;resize:none;
-  max-height:100px;overflow-y:auto;line-height:1.4;
+  max-height:80px;overflow-y:auto;line-height:1.4;
   -webkit-appearance:none;appearance:none;
   -webkit-user-select:text;user-select:text;
 }
-.msg-input:focus{border-color:#555}
+.msg-input:focus{border-color:var(--accent)}
 .msg-input::placeholder{color:var(--muted)}
 .send-btn{
-  width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;
+  width:42px;height:42px;border-radius:50%;background:var(--accent);border:none;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:all 0.2s;flex-shrink:0;-webkit-tap-highlight-color:transparent;
 }
 .send-btn:hover{background:var(--accent2)}
 .send-btn:active{transform:scale(0.93)}
-.no-screenshot{
-  -webkit-user-select:none;user-select:none;
-  pointer-events:auto;
+
+/* SCREENSHOT DEFENSE BLANKING STATE */
+.screenshot-blocker{
+  filter:blur(100px) !important;
+  opacity:0 !important;
+  background:#000000 !important;
+  pointer-events:none !important;
 }
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+
+.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);
   background:#1a1a1a;border:1px solid var(--border);color:var(--text);
   font-family:'Space Mono',monospace;font-size:11px;padding:10px 20px;
-  border-radius:20px;opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap}
+  border-radius:20px;opacity:0;transition:all 0.3s;z-index:9999;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* Mobile optimizations */
@@ -181,14 +199,13 @@ body{font-family:'Syne',sans-serif;color:var(--text);
   .how-box{padding:0.8rem}
   .how-step{gap:8px}
   .step-text{font-size:11px}
+  .input-area{width:94%}
 }
 
 @media (max-width: 480px) {
   .app{max-width:100%}
   .screen{overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .messages{padding:12px}
-  .input-area{padding:8px 10px}
-  .input-row{gap:6px}
+  .messages{padding:12px;padding-bottom:140px}
   .bubble{padding:8px 12px;font-size:12px}
   .msg{max-width:90%}
 }
@@ -196,7 +213,7 @@ body{font-family:'Syne',sans-serif;color:var(--text);
 </head>
 <body>
 <div class="noise"></div>
-<div class="app">
+<div class="app" id="main-view-container">
 
   <!-- SPLASH -->
   <div class="screen" id="splash">
@@ -212,8 +229,8 @@ body{font-family:'Syne',sans-serif;color:var(--text);
         <div class="how-step"><div class="step-num">1</div><div class="step-text"><b>Pick your gender</b> — male or female</div></div>
         <div class="how-step"><div class="step-num">2</div><div class="step-text"><b>Choose who you want to chat with</b> — male or female stranger</div></div>
         <div class="how-step"><div class="step-num">3</div><div class="step-text"><b>Hit connect</b> — we match you instantly with a random stranger</div></div>
-        <div class="how-step"><div class="step-num">4</div><div class="step-text"><b>Chat freely</b> — no names, no profiles, just vibes. Hit NEXT anytime for a new stranger</div></div>
-        <div class="how-step"><div class="step-num">5</div><div class="step-text"><b>Auto-reset</b> every 5 hours — all chats cleared, fresh start</div></div>
+        <div class="how-step"><div class="step-num">4</div><div class="step-text"><b>Chat freely</b> — fresh anonymous name generated on every single connect</div></div>
+        <div class="how-step"><div class="step-num">5</div><div class="step-text"><b>Fresh Matching</b> — 15 mins structural timeout automatically cycles to a new session</div></div>
       </div>
     </div>
 
@@ -257,7 +274,7 @@ body{font-family:'Syne',sans-serif;color:var(--text);
 
     <div class="reset-bar">
       <div class="dot"></div>
-      <span>resets every 5h · next: <span id="countdown">--:--:--</span></span>
+      <span>Secured Anonymous Routing Active</span>
     </div>
   </div>
 
@@ -283,10 +300,12 @@ body{font-family:'Syne',sans-serif;color:var(--text);
         <div class="pname" id="p-name">stranger</div>
         <div class="pstatus">● anonymous · no trace</div>
       </div>
-      <div class="ctimer"><div class="dot"></div><span id="chat-timer">--:--:--</span></div>
+      <div class="ctimer"><div class="dot"></div><span id="chat-timer">15:00</span></div>
       <button class="next-btn" onclick="nextStranger()">NEXT ↻</button>
     </div>
     <div class="messages" id="messages"></div>
+    
+    <!-- MIDDLE OF SCREEN TEXTBOX CONTAINER -->
     <div class="input-area" id="input-area">
       <div class="input-row">
         <textarea class="msg-input" id="msg-input" placeholder="say something..." maxlength="500" rows="1"
@@ -319,7 +338,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Fun anonymous names
 const ADJECTIVES = ['Red','Blue','Green','Purple','Golden','Silver','Cosmic','Wild','Lazy','Brave','Calm','Dark','Bright','Swift','Quiet'];
 const ANIMALS = ['Panda','Fox','Tiger','Wolf','Eagle','Shark','Penguin','Koala','Lynx','Otter','Falcon','Raven','Viper','Bison','Moose'];
 function funName() {
@@ -341,38 +359,21 @@ let partnerListener = null;
 let searchListener = null;
 let presRef = null;
 
-const RESET_MS = 5 * 60 * 60 * 1000;
-let nextReset = Math.ceil(Date.now() / RESET_MS) * RESET_MS;
+let chatTimerInterval = null;
+let chatTimeLeft = 15 * 60; 
 
-function updateCountdown() {
-  const diff = Math.max(0, nextReset - Date.now());
-  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
-  const el = document.getElementById('countdown');
-  if(el) el.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
-  if(diff <= 0){ nextReset += RESET_MS; doReset(); }
-}
-
-async function doReset() {
-  await remove(ref(db,'queue'));
-  await remove(ref(db,'chats'));
-  showToast('🔄 5h reset — fresh start!');
-  leaveChat();
-  goTo('splash');
-}
-
-// PRESENCE — heartbeat optimized for speed
 let heartbeatInterval = null;
 function startPresence() {
   if(!myGender) return;
   presRef = ref(db, `presence/${myGender}/${myId}`);
-  const data = { name: myName, ts: Date.now() };
-  set(presRef, data);
+  set(presRef, { name: myName, ts: Date.now() });
   onDisconnect(presRef).remove();
   clearInterval(heartbeatInterval);
   heartbeatInterval = setInterval(() => {
     if(presRef) set(presRef, { name: myName, ts: Date.now() });
   }, 15000);
 }
+
 function stopPresence() {
   clearInterval(heartbeatInterval);
   if(presRef) remove(presRef);
@@ -400,7 +401,6 @@ function watchOnline() {
   });
 }
 
-// GENDER PICKS
 window.pickMyGender = function(g, el) {
   myGender = g;
   document.querySelectorAll('.gbtn').forEach(b => b.classList.remove('sel'));
@@ -432,7 +432,6 @@ function updateConnectBtn() {
   }
 }
 
-// SEARCH — Optimized for speed
 window.startSearch = async function() {
   if(!myGender || !wantGender) return;
   searching = true;
@@ -451,7 +450,6 @@ window.startSearch = async function() {
     partnerName = waiterData.name || funName();
     partnerGender = wantGender;
     
-    // Fast parallel operations
     await Promise.all([
       remove(ref(db, `queue/${myGender}/${wantGender}/${waiterId}`)),
       set(ref(db, `chats/${chatId}`), {
@@ -498,7 +496,6 @@ window.cancelSearch = async function() {
   goTo('splash');
 };
 
-// CHAT — Fast updates
 function enterChat() {
   searching = false;
   const pg = partnerGender || 'male';
@@ -508,9 +505,14 @@ function enterChat() {
   document.getElementById('p-name').textContent = partnerName || funName();
   document.getElementById('messages').innerHTML = '';
   addSysMsg('connected · say hi 👋');
+  
+  sessionStorage.setItem('strangrr_active_chat', chatId);
+  
   goTo('chat');
   listenMessages();
   watchPartner();
+  startChatTimer();
+
   const userStatRef = ref(db, `userstats/${myId}`);
   runTransaction(userStatRef, data => {
     if(data === null) return { name: myName, gender: myGender, chatCount: 1, lastSeen: Date.now() };
@@ -518,6 +520,30 @@ function enterChat() {
     data.lastSeen = Date.now();
     return data;
   });
+}
+
+function startChatTimer() {
+  clearInterval(chatTimerInterval);
+  chatTimeLeft = 15 * 60; 
+  updateTimerDisplay();
+
+  chatTimerInterval = setInterval(() => {
+    chatTimeLeft--;
+    updateTimerDisplay();
+
+    if(chatTimeLeft <= 0) {
+      clearInterval(chatTimerInterval);
+      showToast('⌛ 15 minutes expired!');
+      nextStranger();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(chatTimeLeft / 60);
+  const s = chatTimeLeft % 60;
+  const el = document.getElementById('chat-timer');
+  if(el) el.textContent = `${pad(m)}:${pad(s)}`;
 }
 
 function listenMessages() {
@@ -546,8 +572,9 @@ function watchPartner() {
   if(!chatId) return;
   partnerListener = onValue(ref(db, `chats/${chatId}/active`), snap => {
     if(snap.exists() && snap.val() === false) {
-      addSysMsg('stranger disconnected · tap NEXT for a new one');
+      addSysMsg('stranger disconnected · cycling to next match');
       showToast('Stranger left the chat');
+      setTimeout(() => { nextStranger(); }, 1500);
     }
   });
 }
@@ -570,12 +597,21 @@ window.sendMessage = async function() {
 };
 
 window.nextStranger = async function() {
+  clearInterval(chatTimerInterval);
   await leaveChat();
-  goTo('splash');
+  
+  // REGULATE NEW ANONYMOUS ALIAS PROTOCOLS ON CYCLE
+  myName = funName();
+  if (myGender) {
+    startPresence(); 
+  }
+
+  goTo('searching');
   setTimeout(() => startSearch(), 300);
 };
 
 async function leaveChat() {
+  sessionStorage.removeItem('strangrr_active_chat');
   if(chatId) {
     await set(ref(db, `chats/${chatId}/active`), false);
     if(msgListener){ off(ref(db,`chats/${chatId}/messages`),'value',msgListener); msgListener=null; }
@@ -594,24 +630,45 @@ function addMsgEl(text, side, ts) {
   c.scrollTop = c.scrollHeight;
 }
 
-// Auto resize textarea
 window.autoResize = function(el) {
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+  el.style.height = Math.min(el.scrollHeight, 80) + 'px';
 };
 
-// Screenshot restriction
+/* ADVANCED SCREENSHOT BLANKING ENGINE */
+const targetContainer = document.getElementById('main-view-container');
+
+function triggerScreenBlank() {
+  targetContainer.classList.add('screenshot-blocker');
+}
+
+function removeScreenBlank() {
+  targetContainer.classList.remove('screenshot-blocker');
+}
+
 document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'hidden') {
-    const msgs = document.getElementById('messages');
-    if(msgs) msgs.style.filter = 'blur(8px)';
+    triggerScreenBlank();
   } else {
-    const msgs = document.getElementById('messages');
-    if(msgs) msgs.style.filter = '';
+    removeScreenBlank();
   }
 });
 
-document.getElementById('chat') && document.getElementById('chat').addEventListener('contextmenu', e => e.preventDefault());
+window.addEventListener('blur', () => {
+  triggerScreenBlank();
+});
+window.addEventListener('focus', () => {
+  removeScreenBlank();
+});
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keyup', (e) => {
+  if (e.key === 'PrintScreen' || e.keyCode === 44) {
+    triggerScreenBlank();
+    navigator.clipboard.writeText(''); 
+    showToast('Protected UI View Active');
+  }
+});
 
 function addSysMsg(text) {
   const c = document.getElementById('messages');
@@ -627,24 +684,22 @@ function goTo(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.a
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 function pad(n){ return String(n).padStart(2,'0'); }
 
-setInterval(()=>{
-  updateCountdown();
-  if(!document.getElementById('chat').classList.contains('hidden')){
-    const secs = Math.max(0, Math.floor((nextReset - Date.now())/1000));
-    const h=Math.floor(secs/3600), m=Math.floor((secs%3600)/60), s=secs%60;
-    document.getElementById('chat-timer').textContent=`${pad(h)}:${pad(m)}:${pad(s)}`;
+window.addEventListener('load', async () => {
+  const interruptedChat = sessionStorage.getItem('strangrr_active_chat');
+  if (interruptedChat) {
+    sessionStorage.removeItem('strangrr_active_chat');
+    await set(ref(db, `chats/${interruptedChat}/active`), false);
   }
-}, 1000);
+  goTo('splash');
+});
 
-window.addEventListener('beforeunload', async () => {
+window.addEventListener('beforeunload', () => {
   stopPresence();
-  if(wantGender && myGender) await remove(ref(db,`queue/${wantGender}/${myGender}/${myId}`));
-  await leaveChat();
+  if(wantGender && myGender) remove(ref(db,`queue/${wantGender}/${myGender}/${myId}`));
+  if(chatId) set(ref(db, `chats/${chatId}/active`), false);
 });
 
 watchOnline();
-updateCountdown();
-goTo('splash');
 </script>
 </body>
 </html>
