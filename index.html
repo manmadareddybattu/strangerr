@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#080808"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'"/>
 <title>Strangrr — Talk to a Stranger</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
@@ -14,7 +19,21 @@
   --male:#3B8BFF;--female:#FF3B8B;--green:#3BFF8B;
 }
 html,body{height:100%;background:var(--bg);overflow:hidden}
-body{font-family:'Syne',sans-serif;color:var(--text)}
+body{font-family:'Syne',sans-serif;color:var(--text);
+  /* Performance */
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeSpeed;
+}
+/* Screenshot block on entire chat */
+#chat{
+  -webkit-user-select:none;
+  user-select:none;
+}
+/* But allow selecting text in bubbles for copy */
+#chat .bubble{
+  -webkit-user-select:text;
+  user-select:text;
+}
 .app{max-width:480px;margin:0 auto;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .noise{position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
@@ -122,18 +141,64 @@ body{font-family:'Syne',sans-serif;color:var(--text)}
 .sys-msg{align-self:center;font-family:'Space Mono',monospace;font-size:10px;
   color:var(--muted);background:var(--card);border:1px solid var(--border);
   padding:5px 14px;border-radius:20px;text-align:center}
-.input-area{padding:12px 16px;border-top:1px solid var(--border);
-  display:flex;gap:10px;align-items:center;flex-shrink:0;background:rgba(8,8,8,0.95)}
-.msg-input{flex:1;background:var(--card);border:1px solid var(--border);
-  border-radius:24px;padding:10px 16px;color:var(--text);
-  font-family:'Syne',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s}
-.msg-input:focus{border-color:#444}
+.input-area{
+  padding:10px 12px 10px 12px;
+  border-top:1px solid var(--border);
+  display:flex;flex-direction:column;gap:8px;
+  flex-shrink:0;background:rgba(8,8,8,0.98);
+  position:sticky;bottom:0;
+  margin-bottom:env(safe-area-inset-bottom,0px);
+}
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.input-actions{display:flex;gap:6px;align-items:center}
+.action-btn{
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--border);background:var(--card);
+  color:var(--muted);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;transition:all 0.2s;font-size:16px;
+  -webkit-tap-highlight-color:transparent;
+}
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+.action-btn:active{transform:scale(0.93)}
+.msg-input{
+  flex:1;background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:9px 14px;color:var(--text);
+  font-family:'Syne',sans-serif;font-size:16px;outline:none;
+  transition:border-color 0.2s;resize:none;
+  max-height:100px;overflow-y:auto;line-height:1.4;
+  /* Fix mobile keyboard push */
+  -webkit-appearance:none;appearance:none;
+  /* Screenshot restriction on input area */
+  -webkit-user-select:text;user-select:text;
+}
+.msg-input:focus{border-color:#555}
 .msg-input::placeholder{color:var(--muted)}
-.send-btn{width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;
+.send-btn{
+  width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:all 0.2s;flex-shrink:0}
-.send-btn:hover{background:var(--accent2);transform:scale(1.08)}
-.send-btn:active{transform:scale(0.95)}
+  transition:all 0.2s;flex-shrink:0;-webkit-tap-highlight-color:transparent;
+}
+.send-btn:hover{background:var(--accent2)}
+.send-btn:active{transform:scale(0.93)}
+/* Screenshot block overlay on chat */
+.no-screenshot{
+  -webkit-user-select:none;user-select:none;
+  pointer-events:auto;
+}
+/* Media preview in chat */
+.msg-media{max-width:200px;max-height:180px;border-radius:12px;object-fit:cover;cursor:pointer;display:block}
+.msg-gif{max-width:200px;border-radius:12px;display:block}
+/* Media preview before send */
+.media-preview{
+  display:none;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:8px 12px;
+}
+.media-preview.show{display:flex}
+.preview-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover}
+.preview-name{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview-remove{background:none;border:none;color:var(--accent);cursor:pointer;font-size:16px;padding:0}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
   background:#1a1a1a;border:1px solid var(--border);color:var(--text);
   font-family:'Space Mono',monospace;font-size:11px;padding:10px 20px;
@@ -234,12 +299,44 @@ body{font-family:'Syne',sans-serif;color:var(--text)}
       <button class="next-btn" onclick="nextStranger()">NEXT ↻</button>
     </div>
     <div class="messages" id="messages"></div>
-    <div class="input-area">
-      <input class="msg-input" id="msg-input" placeholder="say something..." maxlength="300"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"/>
-      <button class="send-btn" onclick="sendMessage()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
+    <div class="input-area" id="input-area">
+      <!-- Media preview -->
+      <div class="media-preview" id="media-preview">
+        <img class="preview-thumb" id="preview-thumb" src="" alt=""/>
+        <span class="preview-name" id="preview-name"></span>
+        <button class="preview-remove" onclick="clearMedia()">✕</button>
+      </div>
+      <!-- Input row -->
+      <div class="input-row">
+        <div class="input-actions">
+          <!-- Photo -->
+          <button class="action-btn" onclick="document.getElementById('photo-input').click()" title="Photo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </button>
+          <!-- GIF -->
+          <button class="action-btn" onclick="toggleGifPicker()" title="GIF" id="gif-btn" style="font-size:11px;font-weight:700;font-family:'Space Mono',monospace;color:var(--accent);border-color:var(--accent)">GIF</button>
+        </div>
+        <textarea class="msg-input" id="msg-input" placeholder="say something..." maxlength="500" rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+          oninput="autoResize(this)"></textarea>
+        <button class="send-btn" onclick="sendMessage()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <!-- Hidden file inputs -->
+      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhoto(this)"/>
+    </div>
+
+    <!-- GIF Picker -->
+    <div id="gif-picker" style="display:none;position:fixed;bottom:80px;left:0;right:0;max-width:480px;margin:0 auto;
+      background:var(--card);border-top:1px solid var(--border);z-index:100;max-height:280px;overflow-y:auto;padding:10px">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input id="gif-search" placeholder="search GIFs..." style="flex:1;background:var(--bg);border:1px solid var(--border);
+          border-radius:8px;padding:8px 12px;color:var(--text);font-family:'Space Mono',monospace;font-size:11px;outline:none"
+          oninput="searchGifs(this.value)"/>
+        <button onclick="toggleGifPicker()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px">✕</button>
+      </div>
+      <div id="gif-results" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
     </div>
   </div>
 </div>
@@ -475,7 +572,7 @@ function listenMessages() {
     const container = document.getElementById('messages');
     container.innerHTML = '';
     Object.values(snap.val()).sort((a,b)=>a.ts-b.ts).forEach(m => {
-      addMsgEl(m.text, m.sender === myId ? 'me' : 'them', m.ts);
+      addMsgEl(m.text, m.sender === myId ? 'me' : 'them', m.ts, m.mediaUrl, m.mediaType);
     });
     container.scrollTop = container.scrollHeight;
   });
@@ -494,13 +591,30 @@ function watchPartner() {
 window.sendMessage = async function() {
   const inp = document.getElementById('msg-input');
   const txt = inp.value.trim();
-  if(!txt || !chatId) return;
+  const mediaData = window._pendingMedia;
+
+  if(!txt && !mediaData) return;
+  if(!chatId) return;
+
   inp.value = '';
-  await push(ref(db, `chats/${chatId}/messages`), {
-    sender: myId,
-    text: txt,
-    ts: Date.now()
-  });
+  autoResize(inp);
+  clearMedia();
+
+  if(mediaData) {
+    await push(ref(db, `chats/${chatId}/messages`), {
+      sender: myId,
+      mediaUrl: mediaData.url,
+      mediaType: mediaData.type, // 'image' or 'gif'
+      text: txt || '',
+      ts: Date.now()
+    });
+  } else {
+    await push(ref(db, `chats/${chatId}/messages`), {
+      sender: myId,
+      text: txt,
+      ts: Date.now()
+    });
+  }
 };
 
 window.nextStranger = async function() {
@@ -519,15 +633,135 @@ async function leaveChat() {
   chatId=null; partnerName=null; partnerGender=null;
 }
 
-function addMsgEl(text, side, ts) {
+function addMsgEl(text, side, ts, mediaUrl, mediaType) {
   const c = document.getElementById('messages');
   const d = document.createElement('div');
   d.className = 'msg ' + side;
   const t = ts ? new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : 'now';
-  d.innerHTML = `<div class="bubble">${esc(text)}</div><div class="mtime">${t}</div>`;
+  let content = '';
+  if(mediaUrl) {
+    if(mediaType === 'gif') {
+      content = `<img class="msg-gif" src="${mediaUrl}" alt="GIF" loading="lazy"/>`;
+    } else {
+      content = `<img class="msg-media" src="${mediaUrl}" alt="photo" loading="lazy" onclick="viewFullImg('${mediaUrl}')"/>`;
+    }
+    if(text) content += `<div class="bubble" style="margin-top:4px">${esc(text)}</div>`;
+  } else {
+    content = `<div class="bubble">${esc(text)}</div>`;
+  }
+  d.innerHTML = content + `<div class="mtime">${t}</div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
+
+// Auto resize textarea
+window.autoResize = function(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+};
+
+// Photo handler — convert to base64 and store pending
+window.handlePhoto = function(input) {
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 3 * 1024 * 1024) { showToast('Image too large (max 3MB)'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    window._pendingMedia = { url: e.target.result, type: 'image' };
+    document.getElementById('preview-thumb').src = e.target.result;
+    document.getElementById('preview-name').textContent = file.name;
+    document.getElementById('media-preview').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+};
+
+// Clear pending media
+window.clearMedia = function() {
+  window._pendingMedia = null;
+  document.getElementById('media-preview').classList.remove('show');
+  document.getElementById('preview-thumb').src = '';
+};
+
+// GIF picker using Tenor public API
+let gifTimeout = null;
+window.toggleGifPicker = function() {
+  const picker = document.getElementById('gif-picker');
+  const isOpen = picker.style.display !== 'none';
+  picker.style.display = isOpen ? 'none' : 'block';
+  if(!isOpen) {
+    searchGifs('trending');
+    setTimeout(()=>document.getElementById('gif-search').focus(), 100);
+  }
+};
+
+window.searchGifs = function(q) {
+  clearTimeout(gifTimeout);
+  gifTimeout = setTimeout(async () => {
+    const container = document.getElementById('gif-results');
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-family:\'Space Mono\',monospace;font-size:10px;color:var(--muted);padding:20px">searching...</div>';
+    try {
+      // Using Tenor v2 with public key
+      const apiKey = 'AIzaSyAyimkuYQYF_FXVALexPNG2aEx6FjhrYxg';
+      const endpoint = q === 'trending'
+        ? `https://tenor.googleapis.com/v2/featured?key=${apiKey}&limit=18&media_filter=gif`
+        : `https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(q)}&key=${apiKey}&limit=18&media_filter=gif`;
+      const res = await fetch(endpoint);
+      const data = await res.json();
+      container.innerHTML = '';
+      if(!data.results || !data.results.length) {
+        container.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-family:\'Space Mono\',monospace;font-size:10px;color:var(--muted);padding:20px">no results</div>';
+        return;
+      }
+      data.results.forEach(gif => {
+        const url = gif.media_formats?.gif?.url || gif.media_formats?.tinygif?.url;
+        if(!url) return;
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.cssText = 'width:100%;height:80px;object-fit:cover;border-radius:8px;cursor:pointer;display:block';
+        img.loading = 'lazy';
+        img.onclick = () => selectGif(url);
+        container.appendChild(img);
+      });
+    } catch(e) {
+      container.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-family:\'Space Mono\',monospace;font-size:10px;color:var(--muted);padding:20px">failed to load GIFs</div>';
+    }
+  }, 400);
+};
+
+window.selectGif = function(url) {
+  window._pendingMedia = { url, type: 'gif' };
+  document.getElementById('preview-thumb').src = url;
+  document.getElementById('preview-name').textContent = 'GIF';
+  document.getElementById('media-preview').classList.add('show');
+  document.getElementById('gif-picker').style.display = 'none';
+};
+
+window.viewFullImg = function(url) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer';
+  const img = document.createElement('img');
+  img.src = url;
+  img.style.cssText = 'max-width:95vw;max-height:95vh;border-radius:12px;object-fit:contain';
+  overlay.appendChild(img);
+  overlay.onclick = () => document.body.removeChild(overlay);
+  document.body.appendChild(overlay);
+};
+
+// Screenshot restriction via visibility change + CSS
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden') {
+    // blur sensitive content
+    const msgs = document.getElementById('messages');
+    if(msgs) msgs.style.filter = 'blur(8px)';
+  } else {
+    const msgs = document.getElementById('messages');
+    if(msgs) msgs.style.filter = '';
+  }
+});
+
+// Prevent context menu on chat (extra layer)
+document.getElementById('chat') && document.getElementById('chat').addEventListener('contextmenu', e => e.preventDefault());
 function addSysMsg(text) {
   const c = document.getElementById('messages');
   const d = document.createElement('div');
